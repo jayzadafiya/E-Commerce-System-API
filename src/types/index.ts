@@ -1,3 +1,17 @@
+import Joi from 'joi';
+import { Request } from 'express';
+import { Document } from 'mongoose';
+
+export interface Config {
+  port: number;
+  nodeEnv: string;
+  mongodbUri: string;
+  apiVersion: string;
+  jwt: {
+    secret: string;
+    expiresIn: string | number;
+  };
+}
 export interface PaginationParams {
   page?: number;
   limit?: number;
@@ -31,4 +45,36 @@ export class ApiError extends Error {
     this.isOperational = isOperational;
     Error.captureStackTrace(this, this.constructor);
   }
+}
+
+export interface ValidationSchema {
+  body?: Joi.ObjectSchema;
+  query?: Joi.ObjectSchema;
+  params?: Joi.ObjectSchema;
+}
+
+export interface AuthRequest extends Request {
+  user?: {
+    id: string;
+    email: string;
+    role?: string;
+  };
+}
+
+export interface JwtPayload {
+  id: string;
+  email: string;
+  role?: string;
+}
+
+// Model Interfaces
+
+export interface ISeller extends Document {
+  name: string;
+  email: string;
+  password: string;
+  loginAttempts: number;
+  lastLoginAttempt?: Date;
+  lockUntil?: Date;
+  createdAt: Date;
 }

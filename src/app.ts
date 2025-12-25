@@ -1,7 +1,8 @@
-import express, { Application, Request, Response, NextFunction } from 'express';
+import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-import config from './config/config';
+import apiRoutes from './routes';
+import { errorHandler, notFound } from './middlewares/errorHandler';
 
 const app: Application = express();
 
@@ -18,20 +19,10 @@ app.get('/health', (req: Request, res: Response) => {
   });
 });
 
-app.use((req: Request, res: Response) => {
-  res.status(404).json({
-    success: false,
-    message: 'Route not found',
-  });
-});
+app.use('/api', apiRoutes);
 
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error('Error:', err);
-  res.status(500).json({
-    success: false,
-    message: 'Internal server error',
-    error: config.nodeEnv === 'development' ? err.message : undefined,
-  });
-});
+app.use(notFound);
+
+app.use(errorHandler);
 
 export default app;
