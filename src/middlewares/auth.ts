@@ -12,7 +12,7 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
     }
 
     const token = authHeader.split(' ')[1];
-    const decoded = verifyToken(token);
+    const decoded: any = verifyToken(token);
 
     req.user = decoded;
     next();

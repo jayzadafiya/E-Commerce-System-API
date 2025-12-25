@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import { Request } from 'express';
-import { Document } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
 export interface Config {
   port: number;
@@ -77,4 +77,32 @@ export interface ISeller extends Document {
   lastLoginAttempt?: Date;
   lockUntil?: Date;
   createdAt: Date;
+}
+
+export interface IBrand extends Document {
+  name: string;
+  description?: string;
+  website?: string;
+  sellerId: mongoose.Types.ObjectId;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface BrandFilterParams extends PaginationParams {
+  search?: string;
+  isActive?: boolean;
+  sellerId?: string;
+}
+
+export interface CreateBrandPayload {
+  name: string;
+  description?: string;
+  website?: string;
+  sellerId: string;
+}
+
+export interface PaginatedBrands {
+  brands: IBrand[];
+  pagination: PaginationMetadata;
 }
