@@ -195,3 +195,13 @@ export interface IUser extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface ICart extends Document {
+  userId: mongoose.Types.ObjectId;
+  items: {
+    productId: mongoose.Types.ObjectId;
+    quantity: number;
+  }[];
+  createdAt: Date;
+  updatedAt: Date;
+}
