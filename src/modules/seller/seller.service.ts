@@ -1,4 +1,5 @@
 import Seller from './seller.model';
+import bcrypt from 'bcrypt';
 import {
   ConflictError,
   UnauthorizedError,
@@ -18,10 +19,12 @@ class SellerService {
     const existing = await this.findByEmail(payload.email);
     if (existing) throw new ConflictError('User already exists');
 
+    const hashedPassword = await bcrypt.hash(payload.password, 10);
+
     const user = await Seller.create({
       name: payload.name,
       email: payload.email,
-      password: payload.password,
+      password: hashedPassword,
     });
 
     return user;
@@ -46,7 +49,8 @@ class SellerService {
       user.lockUntil = undefined;
     }
 
-    if (user.password !== password) {
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
       user.loginAttempts += 1;
       user.lastLoginAttempt = now;
 

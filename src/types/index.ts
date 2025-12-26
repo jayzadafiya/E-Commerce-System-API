@@ -186,3 +186,12 @@ export interface PaginatedCoupons {
   coupons: ICoupon[];
   pagination: PaginationMetadata;
 }
+
+export interface IUser extends Document {
+  name: string;
+  email: string;
+  password: string;
+  walletPoints: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
