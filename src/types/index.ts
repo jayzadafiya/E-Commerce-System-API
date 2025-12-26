@@ -229,6 +229,7 @@ export interface IOrder extends Document {
   couponDiscount: number;
   walletPointsUsed: number;
   status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
+  paymentStatus: 'pending' | 'success' | 'failed';
   createdAt: Date;
   updatedAt: Date;
 }

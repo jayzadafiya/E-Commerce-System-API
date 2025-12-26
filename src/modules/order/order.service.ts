@@ -33,12 +33,6 @@ class OrderService {
           quantity: item.quantity,
           price: product.price,
         });
-
-        await Product.findByIdAndUpdate(
-          product._id,
-          { $inc: { stock: -item.quantity } },
-          { session }
-        );
       }
 
       let discount = 0;
@@ -118,6 +112,54 @@ class OrderService {
 
       await session.commitTransaction();
       return order[0];
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      session.endSession();
+    }
+  }
+
+  async handlePayment(orderId: string, paymentStatus: 'success' | 'failed'): Promise<IOrder> {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+      const order = await Order.findById(orderId).session(session);
+      if (!order) throw new NotFoundError('Order not found');
+      if (order.paymentStatus !== 'pending') throw new BadRequestError('Payment already processed');
+
+      order.paymentStatus = paymentStatus;
+
+      if (paymentStatus === 'success') {
+        for (const item of order.items) {
+          await Product.findByIdAndUpdate(
+            item.productId,
+            { $inc: { stock: -item.quantity } },
+            { session }
+          );
+        }
+      } else {
+        if (order.walletPointsUsed > 0) {
+          await User.findByIdAndUpdate(
+            order.userId,
+            { $inc: { walletPoints: order.walletPointsUsed } },
+            { session }
+          );
+        }
+
+        if (order.couponCode) {
+          await Coupon.findOneAndUpdate(
+            { code: order.couponCode },
+            { $inc: { usedCount: -1 } },
+            { session }
+          );
+        }
+      }
+
+      await order.save({ session });
+      await session.commitTransaction();
+      return order;
     } catch (error) {
       await session.abortTransaction();
       throw error;

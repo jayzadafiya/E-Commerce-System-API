@@ -56,6 +56,12 @@ const orderSchema = new Schema<IOrder>(
       enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'],
       default: 'pending',
     },
+    paymentStatus: {
+      type: String,
+      enum: ['pending', 'success', 'failed'],
+      default: 'pending',
+      index: true,
+    },
   },
   {
     timestamps: true,

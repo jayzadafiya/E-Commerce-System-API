@@ -15,3 +15,16 @@ export const placeOrder = asyncHandler(async (req: AuthRequest, res: Response) =
     data: order,
   });
 });
+
+export const handlePayment = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const { id } = req.params;
+  const { paymentStatus } = req.body;
+
+  const order = await orderService.handlePayment(id, paymentStatus);
+
+  return res.status(200).json({
+    success: true,
+    message: `Payment ${paymentStatus}`,
+    data: order,
+  });
+});
