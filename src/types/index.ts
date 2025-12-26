@@ -106,3 +106,42 @@ export interface PaginatedBrands {
   brands: IBrand[];
   pagination: PaginationMetadata;
 }
+
+export interface IProduct extends Document {
+  name: string;
+  description?: string;
+  price: number;
+  stock: number;
+  category?: string;
+  brandId: mongoose.Types.ObjectId;
+  sellerId: mongoose.Types.ObjectId;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ProductFilterParams extends PaginationParams {
+  search?: string;
+  category?: string;
+  brandId?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  inStock?: boolean;
+  isActive?: boolean;
+  sellerId?: string;
+}
+
+export interface CreateProductPayload {
+  name: string;
+  description?: string;
+  price: number;
+  stock?: number;
+  category?: string;
+  brandId: string;
+  sellerId: string;
+}
+
+export interface PaginatedProducts {
+  products: IProduct[];
+  pagination: PaginationMetadata;
+}
