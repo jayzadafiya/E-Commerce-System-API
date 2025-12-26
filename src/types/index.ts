@@ -145,3 +145,44 @@ export interface PaginatedProducts {
   products: IProduct[];
   pagination: PaginationMetadata;
 }
+
+export interface ICoupon extends Document {
+  code: string;
+  discountType: 'percentage' | 'fixed';
+  discountValue: number;
+  minPurchase: number;
+  maxDiscount?: number;
+  validFrom: Date;
+  validUntil: Date;
+  usageLimit?: number;
+  usedCount: number;
+  sellerId: mongoose.Types.ObjectId;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CouponFilterParams extends PaginationParams {
+  search?: string;
+  discountType?: 'percentage' | 'fixed';
+  isActive?: boolean;
+  validOnly?: boolean;
+  sellerId?: string;
+}
+
+export interface CreateCouponPayload {
+  code: string;
+  discountType: 'percentage' | 'fixed';
+  discountValue: number;
+  minPurchase?: number;
+  maxDiscount?: number;
+  validFrom: Date;
+  validUntil: Date;
+  usageLimit?: number;
+  sellerId: string;
+}
+
+export interface PaginatedCoupons {
+  coupons: ICoupon[];
+  pagination: PaginationMetadata;
+}
