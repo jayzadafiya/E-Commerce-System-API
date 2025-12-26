@@ -26,3 +26,16 @@ export const getCart = asyncHandler(async (req: AuthRequest, res: Response) => {
     data: cart,
   });
 });
+
+export const calculateTotal = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const { couponCode, useWalletPoints } = req.body;
+  const userId = req.user!.id;
+
+  const total = await cartService.calculateTotal(userId, couponCode, useWalletPoints);
+
+  return res.status(200).json({
+    success: true,
+    message: 'Total calculated successfully',
+    data: total,
+  });
+});

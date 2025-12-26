@@ -205,3 +205,12 @@ export interface ICart extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface CartTotal {
+  subtotal: number;
+  discount: number;
+  total: number;
+  couponDiscount: { code: string; discount: number } | null;
+  walletPointsUsed: number;
+  availableWalletPoints: number;
+}
