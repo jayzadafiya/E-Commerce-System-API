@@ -132,12 +132,26 @@ class OrderService {
       order.paymentStatus = paymentStatus;
 
       if (paymentStatus === 'success') {
+        const bulkOps = [];
         for (const item of order.items) {
-          await Product.findByIdAndUpdate(
-            item.productId,
-            { $inc: { stock: -item.quantity } },
-            { session }
-          );
+          const product = await Product.findById(item.productId).session(session);
+          if (!product) throw new NotFoundError('Product not found');
+          if (product.stock < item.quantity) throw new BadRequestError(`Insufficient stock for product`);
+
+          const newStock = product.stock - item.quantity;
+          bulkOps.push({
+            updateOne: {
+              filter: { _id: item.productId },
+              update: { 
+                $inc: { stock: -item.quantity },
+                ...(newStock === 0 && { $set: { isActive: false } })
+              },
+            },
+          });
+        }
+
+        if (bulkOps.length > 0) {
+          await Product.bulkWrite(bulkOps, { session });
         }
       } else {
         if (order.walletPointsUsed > 0) {
