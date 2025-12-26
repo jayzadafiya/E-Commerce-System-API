@@ -214,3 +214,21 @@ export interface CartTotal {
   walletPointsUsed: number;
   availableWalletPoints: number;
 }
+
+export interface IOrder extends Document {
+  userId: mongoose.Types.ObjectId;
+  items: {
+    productId: mongoose.Types.ObjectId;
+    quantity: number;
+    price: number;
+  }[];
+  subtotal: number;
+  discount: number;
+  total: number;
+  couponCode?: string;
+  couponDiscount: number;
+  walletPointsUsed: number;
+  status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
+  createdAt: Date;
+  updatedAt: Date;
+}
